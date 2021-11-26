@@ -76,4 +76,4 @@ def var_pchange():
  
   # show(p)
   return p
-var_pchange()
+#var_pchange()

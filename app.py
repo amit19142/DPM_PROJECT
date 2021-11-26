@@ -2,17 +2,20 @@ import sqlite3
 from sqlite3.dbapi2 import Cursor
 import os
 from ns import best
-from untitled4 import plot4
+
+from RIS import ris
+from bokeh.layouts import row
 from bokeh.embed import components
-from CODE import first, gold_comp
+from CODE import first
 from varMargin import var_pchange
 import pandas as pd
+from gold import gold_comp
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template,request,redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import query
 
-from untitled4 import plot4
+
 currentlocation=os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
@@ -91,24 +94,32 @@ def home():
     if(request.method=='POST'):
         f=request.files['file']
         df=pd.read_csv(f)
-        print(df.head(10))
+        # print(df.head(10))
         k=first(df)
-        f=gold_comp(df)
         b,l=best()
-        # plot4()
         var=var_pchange()
+        gr = ris()
+        
         
         
         demo_script_code1,chart_code1=components(k)
-        demo_script_code2,chart_code2=components(f)
+        # demo_script_code2,chart_code2=components(f)
         demo_script_code3,chart_code3=components(b)
         demo_script_code4,chart_code4=components(var)
+        # demo_script_code5,chart_code5=components(RIS_1)
+        # demo_script_code6,chart_code6=components(RIS_2)
+        demo_script_code7,chart_code7=components(gr)
         
-        
-
-
-        
-        return render_template('home.html',demo_script_code1=demo_script_code1,chart_code1=chart_code1,demo_script_code2=demo_script_code2,chart_code2=chart_code2,demo_script_code3=demo_script_code3,chart_code3=chart_code3,demo_script_code4=demo_script_code4,chart_code4=chart_code4)
+    
+        return render_template('home.html',
+        demo_script_code1=demo_script_code1,chart_code1=chart_code1,
+        # demo_script_code2=demo_script_code2,chart_code2=chart_code2,
+        demo_script_code3=demo_script_code3,chart_code3=chart_code3,
+        demo_script_code4=demo_script_code4,chart_code4=chart_code4,
+        # demo_script_code5=demo_script_code5,chart_code5=chart_code5,
+        # demo_script_code6=demo_script_code6,chart_code6=chart_code6,
+        demo_script_code7=demo_script_code7,chart_code7=chart_code7
+        )
     else:
         
         return render_template('home.html')
@@ -123,26 +134,13 @@ def aboutus():
         return render_template('aboutus.html')
 
 
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/sectorwisecomp',methods=['GET','POST'])
 def sectorwisecomp():
+
     if(request.method=='POST'):
-        return render_template('sectorwisecomp.html')
+        f1=gold_comp('TATAMOTORS')
+        demo_script_code1,chart_code1=components(f1)
+        return render_template('sectorwisecomp.html',demo_script_code1=demo_script_code1,chart_code1=chart_code1)
     else:
         return render_template('sectorwisecomp.html')
 
