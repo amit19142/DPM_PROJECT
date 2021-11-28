@@ -1,5 +1,5 @@
-import sqlite3
-from sqlite3.dbapi2 import Cursor
+# import sqlite3
+# from sqlite3.dbapi2 import Cursor
 import os
 from ns import best
 import os
@@ -10,7 +10,7 @@ from CODE import first
 from varMargin import var_pchange
 import pandas as pd
 from gold import gold_comp
-from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 from flask import Flask, render_template,request,redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import query
