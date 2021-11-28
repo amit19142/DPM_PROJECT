@@ -20,13 +20,13 @@ from bokeh.models import ColumnDataSource, FactorRange
 from bokeh.plotting import figure
 from bokeh.palettes import Spectral6
 
-def gold_comp(s):
+def gold_comp(df2,s):
   df1=pd.read_excel("IMP_PRICE.xlsx")
   # print(df1.head())
   df1['Date']=df1['Name'].dt.date
 
 
-  df2=pd.read_csv('user.csv')
+  # df2=pd.read_csv('user.csv')
   df2['Date']=pd.to_datetime(df2.order_execution_time)
   df2['Date']=df2['Date'].dt.date
 
@@ -61,65 +61,70 @@ def gold_comp(s):
       amount=qunatity*price
       stocks[key].append((Date,price, qunatity,amount))
   
+  
 
-  select=stocks[s]
-  y=set()
-  for i in select:
-    y.add(i[0])
-  dates=[]
-  for i in y:
-    dates.append(i)
-  dates.sort()
-  quantity=[]
-  amount=[]
-  price=[]
-  ngram=[]
-  goldprice=[]
+  if(s in name):
+    select=stocks[s]
+    y=set()
+    for i in select:
+      y.add(i[0])
+    dates=[]
+    for i in y:
+      dates.append(i)
+    dates.sort()
+    quantity=[]
+    amount=[]
+    price=[]
+    ngram=[]
+    goldprice=[]
 
-  for i in range(len(dates)):
-    a=0
-    q=0
-    p=0
-    for j in range(len(select)):
-      if(dates[i]==select[j][0]):
-        a=a+select[j][3]
-        q=q+select[j][2]
-        p=select[j][1]
+    for i in range(len(dates)):
+      a=0
+      q=0
+      p=0
+      for j in range(len(select)):
+        if(dates[i]==select[j][0]):
+          a=a+select[j][3]
+          q=q+select[j][2]
+          p=select[j][1]
       
-    amount.append(a)
-    price.append(p)
-    quantity.append(q)
-    ngram.append(a/golddata[dates[i]])
-    goldprice.append(golddata[dates[i]])
+      amount.append(a)
+      price.append(p)
+      quantity.append(q)
+      ngram.append(a/golddata[dates[i]])
+      goldprice.append(golddata[dates[i]])
     
   
-  for i in range(len(dates)):
-    if(i!=0):
-      amount[i]=amount[i]+amount[i-1]
-      quantity[i]=quantity[i]+quantity[i-1]
-      ngram[i]=ngram[i]+ngram[i-1]
+    for i in range(len(dates)):
+      if(i!=0):
+        amount[i]=amount[i]+amount[i-1]
+        quantity[i]=quantity[i]+quantity[i-1]
+        ngram[i]=ngram[i]+ngram[i-1]
   
-  benifit_stock=[]
-  benifit_gold=[]
+    benifit_stock=[]
+    benifit_gold=[]
 
-  for i in range(len(amount)):
-    benifit_stock.append(quantity[i]*price[i])
-    benifit_gold.append(ngram[i]*goldprice[i])
-    dates[i]=pd.to_datetime(dates[i])
+    for i in range(len(amount)):
+      benifit_stock.append(quantity[i]*price[i])
+      benifit_gold.append(ngram[i]*goldprice[i])
+      dates[i]=pd.to_datetime(dates[i])
 
   
   
 
 
-  f=figure(x_axis_label="Date",y_axis_label=" Net Worth ",x_axis_type='datetime',title=" Total Wealth",plot_height=400,plot_width=500)
-  f.circle(dates,benifit_stock, size = 5, color = 'red')
-  f.line(x=dates,y=benifit_stock,line_color='red',legend_label="STOCK Net Worth ")
-  f.circle(dates,benifit_gold, size = 5, color = 'blue')
-  f.line(x=dates,y=benifit_gold,line_color='blue',legend_label="GOLD Net Worth")
-  f.circle(dates,amount, size = 5, color = 'green')
-  f.line(x=dates,y=amount,line_color='green',legend_label="INVESTMENT")
+    f=figure(x_axis_label="Date",y_axis_label=" Net Worth ",x_axis_type='datetime',title=" Total Wealth",plot_height=500,plot_width=1000)
+    f.circle(dates,benifit_stock, size = 5, color = 'red')
+    f.line(x=dates,y=benifit_stock,line_color='red',legend_label="STOCK Net Worth ")
+    f.circle(dates,benifit_gold, size = 5, color = 'blue')
+    f.line(x=dates,y=benifit_gold,line_color='blue',legend_label="GOLD Net Worth")
+    f.circle(dates,amount, size = 5, color = 'green')
+    f.line(x=dates,y=amount,line_color='green',legend_label="INVESTMENT")
    
-  return f
+    return f
+  else:
+     f=figure(x_axis_label="Date",y_axis_label=" Net Worth ",x_axis_type='datetime',title=" Total Wealth",plot_height=500,plot_width=1000)
+     return f
   
 
 

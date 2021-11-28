@@ -16,10 +16,10 @@ import concurrent.futures
 
 
 
-def var_pchange():
+def var_pchange(df):
 
-  df=pd.read_csv('user.csv')
-  print(df)
+  # df=pd.read_csv('user.csv')
+  # print(df)
   x=df[df.exchange=='NSE'].symbol.unique()
   y=[]
   def d(symbol):

@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3.dbapi2 import Cursor
 import os
 from ns import best
-
+import os
 from RIS import ris
 from bokeh.layouts import row
 from bokeh.embed import components
@@ -16,12 +16,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import query
 
 
-currentlocation=os.path.dirname(os.path.abspath(__file__))
+# currentlocation=os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
-
+allname=[]
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
+app.config['UPLOAD_FOLDER']='C://Users//AMIT//OneDrive//Desktop//PROJECT//static'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db=SQLAlchemy(app)
 
 class user(db.Model):
@@ -31,8 +33,7 @@ class user(db.Model):
     Upassword = db.Column(db.String(80))
 
 
-
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def register():
     if(request.method=='POST'):
         name=request.form['name']
@@ -56,7 +57,7 @@ def register():
             flash('Congratulation Account Created!!', category='sucessful')
             
             
-            return redirect("/")
+            return redirect("/login")
         return redirect('/register')
 
 
@@ -73,7 +74,7 @@ def login():
         login = user.query.filter_by(Uemail=uname, Upassword=passw).first()
         if login is not None:
             flash('Login sucessfully', category='sucessful')
-            return redirect('/')
+            return redirect('/home')
         else:
             flash('Incorrect mail or password.', category='error')
             return render_template("login.html")
@@ -81,40 +82,42 @@ def login():
     return render_template("login.html")
 
 
-
-
-
-
-
-
-
  
-@app.route('/', methods=['GET','POST'])
+@app.route('/home', methods=['GET','POST'])
 def home():
     if(request.method=='POST'):
         f=request.files['file']
+        
         df=pd.read_csv(f)
-        # print(df.head(10))
+        global allname
+        allname=df.symbol.unique()
         k=first(df)
-        b,l=best()
-        var=var_pchange()
-        gr = ris()
+        # b,l=best()
+        var=var_pchange(df)
+        gr = ris(df)
+        
+        # if f.filename != '':
+            
+            # f.filename='user.csv'
+            # f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
         
         
         
         demo_script_code1,chart_code1=components(k)
         # demo_script_code2,chart_code2=components(f)
-        demo_script_code3,chart_code3=components(b)
+        # demo_script_code3,chart_code3=components(b)
         demo_script_code4,chart_code4=components(var)
         # demo_script_code5,chart_code5=components(RIS_1)
         # demo_script_code6,chart_code6=components(RIS_2)
         demo_script_code7,chart_code7=components(gr)
+       
+
         
-    
+        
         return render_template('home.html',
         demo_script_code1=demo_script_code1,chart_code1=chart_code1,
         # demo_script_code2=demo_script_code2,chart_code2=chart_code2,
-        demo_script_code3=demo_script_code3,chart_code3=chart_code3,
+        # demo_script_code3=demo_script_code3,chart_code3=chart_code3,
         demo_script_code4=demo_script_code4,chart_code4=chart_code4,
         # demo_script_code5=demo_script_code5,chart_code5=chart_code5,
         # demo_script_code6=demo_script_code6,chart_code6=chart_code6,
@@ -136,13 +139,24 @@ def aboutus():
 
 @app.route('/sectorwisecomp',methods=['GET','POST'])
 def sectorwisecomp():
+    allname=[]
 
     if(request.method=='POST'):
-        f1=gold_comp('TATAMOTORS')
+        f=request.files['file2']
+        s=request.form['sector']
+        df=pd.read_csv(f)
+        allname=df.symbol.unique()
+        
+        f1=gold_comp(df,s)
         demo_script_code1,chart_code1=components(f1)
-        return render_template('sectorwisecomp.html',demo_script_code1=demo_script_code1,chart_code1=chart_code1)
+        return render_template('sectorwisecomp.html',demo_script_code1=demo_script_code1,chart_code1=chart_code1,allname=allname)
     else:
-        return render_template('sectorwisecomp.html')
+        # df=pd.read_excel('ALL DATA (1).xlsx')
+        
+
+        
+        
+        return render_template('sectorwisecomp.html',allname=allname)
 
 
 
@@ -150,7 +164,11 @@ def sectorwisecomp():
 
 @app.route('/hotstocks',methods=['GET','POST'])
 def hotstocks():
-    return render_template('hotstocks.html')
+    b,l=best()
+    demo_script_code3,chart_code3=components(b)
+    
+
+    return render_template('hotstocks.html',demo_script_code3=demo_script_code3,chart_code3=chart_code3)
 
 
 

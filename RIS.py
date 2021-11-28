@@ -14,8 +14,8 @@ from bokeh.plotting import figure, show
 from bokeh.transform import cumsum
 from bokeh.plotting import figure, show
 
-def ris():
-    df=pd.read_csv('user.csv')
+def ris(df):
+    # df=pd.read_csv('user.csv')
     # print(df)
 
     # import pandas as pd
