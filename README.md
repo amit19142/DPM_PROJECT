@@ -1,5 +1,5 @@
 # DPM_PROJECT
-Zerodha data analysis (Amit + Palak)
+Zerodha data analysis (Amit + Palak + Mahesh Kumar)
 INPUT 
 1. The user will give their transaction history (format:csv)
 Tasks 
